@@ -44,7 +44,11 @@ server.route({
         content: request.payload.content,
         external_user_name: request.payload.external_user_name
       })
-      .end();
+      .end(function(err) {
+        if (err) {
+          console.log(err);
+        }
+      });
 
       // Reset timeout.
       timeout = null;
@@ -55,7 +59,7 @@ server.route({
 });
 
 // Start server.
-server.start(function(error) {
+server.start(function(err) {
   if (error) {
     throw error;
   }
