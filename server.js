@@ -28,7 +28,7 @@ server.route({
   handler: function(request, reply) {
     // Allow only one timeout set. Poor mans throttling ;(
     if (timeout) {
-      return reply('ignored');
+      return reply('ignored').code(429);
     }
 
     // Set timeout.
