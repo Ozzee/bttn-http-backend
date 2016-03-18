@@ -7,7 +7,7 @@ var server = new Hapi.Server();
 server.connection({ port: process.env.PORT || 8080 });
 
 // Helpers for timeout.
-var TIMEOUT_DURATION = 1000 * 60 * 1; // 5mins
+var TIMEOUT_DURATION = 1000 * 60 * 5; // 5mins
 var timeout = null;
 
 // Routing.
@@ -35,14 +35,15 @@ server.route({
     timeout = setTimeout(function() {
       // Logging.
       console.log('Executing', request.payload);
-      
+
       // Send request to given url.
       superagent.post(request.payload.url)
       .send({
         event: request.payload.event,
         content: request.payload.content,
         external_user_name: request.payload.external_user_name
-      });
+      })
+      .end();
 
       // Reset timeout.
       timeout = null;
