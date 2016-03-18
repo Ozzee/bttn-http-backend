@@ -60,7 +60,7 @@ server.route({
 
 // Start server.
 server.start(function(err) {
-  if (error) {
-    throw error;
+  if (err) {
+    throw err;
   }
 });
