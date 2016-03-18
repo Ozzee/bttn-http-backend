@@ -18,10 +18,11 @@ server.route({
     validate: {
       // Validate body.
       payload: {
-        url: Joi.string().uri({ scheme: ['https'] }).required(),
+        url: Joi.string().uri({ scheme: ['http', 'https'] }).required(),
         event: Joi.string().valid('message').required(),
         content: Joi.string().required(),
-        external_user_name: Joi.string().required()
+        external_user_name: Joi.string().required(),
+        instant: Joi.boolean().valid(true)
       }
     }
   },
@@ -47,7 +48,7 @@ server.route({
 
       // Reset timeout.
       timeout = null;
-    }, TIMEOUT_DURATION);
+    }, request.payload.instant ? 100 : TIMEOUT_DURATION);
 
     return reply('success');
   }
