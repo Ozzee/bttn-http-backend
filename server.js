@@ -1,6 +1,7 @@
 var Hapi = require('hapi');
 var Joi = require('joi');
-var superagent = require('superagent');
+var superagent = require('superagent-bluebird-promise');
+var Promise = require('bluebird');
 var server = new Hapi.Server();
 
 // Server config.
@@ -22,7 +23,8 @@ server.route({
         event: Joi.string().valid('message').required(),
         content: Joi.string().required(),
         external_user_name: Joi.string().required(),
-        instant: Joi.boolean().valid(true)
+        instant: Joi.boolean().valid(true),
+        gif: Joi.string()
       }
     }
   },
@@ -37,21 +39,43 @@ server.route({
       // Logging.
       console.log('Executing', request.payload);
 
-      // Send request to given url.
-      superagent.post(request.payload.url)
-      .send({
+      // Request data.
+      var data = {
         event: request.payload.event,
         content: request.payload.content,
         external_user_name: request.payload.external_user_name
-      })
-      .end(function(err) {
-        if (err) {
-          console.log(err);
-        }
-      });
+      };
 
-      // Reset timeout.
-      timeout = null;
+      // New promise for fetching gif.
+      new Promise(function(resolve, reject) {
+        // No gif keyword given, resolve promise.
+        if (!request.payload.gif) {
+          resolve(false);
+        }
+
+        // Fetch gif and resolve with its URL.
+        superagent
+          .get('http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=' + request.payload.gif)
+          .then(function(result) {
+            resolve(result.body.data.image_url);
+          })
+          .catch(function(err) {
+            resolve(false);
+          });
+      })
+      .then(function(image_url) {
+        // If got gif, append to message content.
+        if (image_url) {
+          data.content += ' ' + image_url;
+        }
+
+        // Send request to given url.
+        return superagent.post(request.payload.url).send(data);
+      })
+      .then()
+      .finally(function() {
+        timeout = null;
+      });
     }, request.payload.instant ? 100 : TIMEOUT_DURATION);
 
     return reply('success');
