@@ -55,6 +55,7 @@ server.route({
 
         // Fetch gif and resolve with its URL.
         superagent
+          // Using public beta key: https://github.com/Giphy/GiphyAPI#public-beta-key
           .get('http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=' + request.payload.gif)
           .then(function(result) {
             resolve(result.body.data.image_url);
