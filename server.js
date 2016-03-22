@@ -8,7 +8,7 @@ var server = new Hapi.Server();
 server.connection({port: process.env.PORT || 8080});
 
 // Helpers for timeout.
-var TIMEOUT_DURATION = 1000 * 60; // Minutes
+var TIMEOUT_DELAY = 1000 * 60; // Minutes
 var timeout = null;
 
 // Routing.
@@ -23,7 +23,7 @@ server.route({
         event: Joi.string().valid('message').required(),
         content: Joi.string().required(),
         external_user_name: Joi.string().required(),
-        duration: Joi.number().integer().min(0).max(60),
+        delay: Joi.number().integer().min(0).max(60),
         gif: Joi.string()
       }
     }
@@ -76,7 +76,7 @@ server.route({
       .finally(function() {
         timeout = null;
       });
-    }, request.payload.duration ? TIMEOUT_DURATION * request.payload.duration : 100);
+    }, request.payload.delay ? TIMEOUT_DELAY * request.payload.delay : 100);
 
     return reply('success');
   }
