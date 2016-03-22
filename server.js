@@ -5,10 +5,10 @@ var Promise = require('bluebird');
 var server = new Hapi.Server();
 
 // Server config.
-server.connection({ port: process.env.PORT || 8080 });
+server.connection({port: process.env.PORT || 8080});
 
 // Helpers for timeout.
-var TIMEOUT_DURATION = 1000 * 60 * 5; // 5mins
+var TIMEOUT_DURATION = 1000 * 60; // Minutes
 var timeout = null;
 
 // Routing.
@@ -19,11 +19,11 @@ server.route({
     validate: {
       // Validate body.
       payload: {
-        url: Joi.string().uri({ scheme: ['http', 'https'] }).required(),
+        url: Joi.string().uri({scheme: ['http', 'https']}).required(),
         event: Joi.string().valid('message').required(),
         content: Joi.string().required(),
         external_user_name: Joi.string().required(),
-        instant: Joi.boolean().valid(true),
+        duration: Joi.number().integer().min(0).max(60),
         gif: Joi.string()
       }
     }
@@ -76,7 +76,7 @@ server.route({
       .finally(function() {
         timeout = null;
       });
-    }, request.payload.instant ? 100 : TIMEOUT_DURATION);
+    }, request.payload.duration ? TIMEOUT_DURATION * request.payload.duration : 100);
 
     return reply('success');
   }
