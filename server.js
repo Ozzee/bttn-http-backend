@@ -23,6 +23,7 @@ server.route({
         event: Joi.string().valid('message').required(),
         content: Joi.string().required(),
         external_user_name: Joi.string().required(),
+        thread_id: Joi.string(),
         delay: Joi.number().integer().min(0).max(60),
         gif: Joi.string()
       }
