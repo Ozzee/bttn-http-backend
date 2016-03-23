@@ -44,7 +44,8 @@ server.route({
       var data = {
         event: request.payload.event,
         content: request.payload.content,
-        external_user_name: request.payload.external_user_name
+        external_user_name: request.payload.external_user_name,
+        thread_id: request.payload.thread_id || ''
       };
 
       // New promise for fetching gif.
