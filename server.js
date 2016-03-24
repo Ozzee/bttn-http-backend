@@ -76,6 +76,9 @@ server.route({
         return superagent.post(request.payload.url).send(data);
       })
       .then()
+      .catch(function(err) {
+        console.log(err);
+      })
       .finally(function() {
         timeout = null;
       });
