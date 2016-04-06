@@ -55,12 +55,17 @@ server.route({
           resolve(false);
         }
 
-        // Fetch gif and resolve with its URL.
         superagent
-          // Using public beta key: https://github.com/Giphy/GiphyAPI#public-beta-key
-          .get('http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=' + request.payload.gif)
+          .get('http://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&q=coffee&limit=0')
           .then(function(result) {
-            resolve(result.body.data.image_url);
+            var index = Math.floor(Math.random() * result.body.pagination.total_count);
+            // Fetch gif and resolve with its URL.
+            superagent
+              // Using public beta key: https://github.com/Giphy/GiphyAPI#public-beta-key
+              .get('http://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&q=' + request.payload.gif + '&limit=1&offset=' + index)
+              .then(function(result) {
+                resolve(result.body.data[0].images.downsized.url);
+              });
           })
           .catch(function(err) {
             resolve(false);
