@@ -3,9 +3,10 @@ var Joi = require('joi');
 var superagent = require('superagent-bluebird-promise');
 var Promise = require('bluebird');
 var server = new Hapi.Server();
+var PORT = process.env.PORT || 8080;
 
 // Server config.
-server.connection({port: process.env.PORT || 8080});
+server.connection({port: PORT});
 
 // Helpers for timeout.
 var TIMEOUT_DELAY = 1000 * 60; // Minutes
@@ -97,5 +98,7 @@ server.route({
 server.start(function(err) {
   if (err) {
     throw err;
+  } else {
+    console.log("Starting server on port " + PORT);
   }
 });
