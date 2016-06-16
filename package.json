@@ -11,5 +11,8 @@
     "joi": "^8.0.4",
     "superagent": "^1.8.1",
     "superagent-bluebird-promise": "^3.0.0"
+  },
+  "scripts": {
+    "start": "node server.js"
   }
 }
